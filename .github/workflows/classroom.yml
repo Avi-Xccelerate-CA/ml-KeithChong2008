@@ -1,0 +1,34 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: week4a_test.py
+      id: week4a_test-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 10
+        setup-command: pip install pandas scikit-learn numpy
+    - name: week4b_test.py
+      id: week4b_test-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 10
+        setup-command: pip install pandas scikit-learn numpy
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        WEEK4A_TEST-PY_RESULTS: "${{steps.week4a_test-py.outputs.result}}"
+        WEEK4B_TEST-PY_RESULTS: "${{steps.week4b_test-py.outputs.result}}"
+      with:
+        runners: week4a_test-py,week4b_test-py
