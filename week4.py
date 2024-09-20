@@ -22,7 +22,8 @@ from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
 import math
 import pandas as pd
-
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
 
 #Question1
 def load():
@@ -30,6 +31,7 @@ def load():
 	load the dataset
 	return df
 	'''
+	df = pd.read_csv('https://www.kaggle.com/datasets/quantbruce/real-estate-price-prediction/download')
 	#SOLUTION START( ~ 1 line of code)
 	
 
@@ -53,7 +55,7 @@ def getShape():
 	'''
 	#SOLUTION START( ~ 1 line of code)
 	
-
+	return df.shape
 	#SOLUTION END
 
 print(getShape())
@@ -66,7 +68,7 @@ def getInfo():
 	'''
 	#SOLUTION START( ~ 1 line of code)
 	
-
+	return df.info()
 	#SOLUTION END
 
 print(getInfo())
@@ -88,7 +90,7 @@ def checkNull():
 	'''
 
 	#SOLUTION START( ~ 1 line of code)
-	
+	return df.isnull().sum()
 
 	#SOLUTION END
 
@@ -102,7 +104,7 @@ def getStatistic():
 	'''
 
 	#SOLUTION START( ~ 1 line of code)
-
+	return df.describe()
 	#SOLUTION END
 
 print(getStatistic())
@@ -122,49 +124,46 @@ print(df_X.head())
 # IMPORTANT:for grading purpose,  please set the same seed random_state = 42
 
 def split():
-	'''
-	IMPORTANT: this function will return four values X_train, X_test, y_train, y_test
-	'''
-	#SOLUTION START( ~ 1-2 line of code)
-
-	#SOLUTION END
+    '''
+    IMPORTANT: this function will return four values X_train, X_test, y_train, y_test
+    '''
+    # SOLUTION START
+    X = df.drop(columns=['Y house price of unit area'])  # Features
+    y = df['Y house price of unit area']  # Target variable
+    return train_test_split(X, y, test_size=0.2, random_state=42)
+    # SOLUTION END
 
 X_train, X_test, y_train, y_test = split()
 
 
-#Question 9
 def makeModel():
-	'''
-	this function will create linear regression object,train the model using the training sets,
-	make predictions using the testing set
-	this function returns coefficients, intercept, mse, rmse, variance
-	'''
+    '''
+    This function will create a linear regression object, train the model using the training sets,
+    make predictions using the testing set, and return coefficients, intercept, mse, rmse, r2score.
+    '''
 
-	# Create linear regression object
-	#SOLUTION START(~ 1 line of code)
+    # Create linear regression object
+    # SOLUTION START
+    model = LinearRegression()
+    # SOLUTION END
 
-	#SOLUTION END
+    # Train the model using the training sets
+    # SOLUTION START
+    model.fit(X_train, y_train)
+    # SOLUTION END
 
-	# Train the model using the training sets
-	#SOLUTION START(~ 1 line of code)
+    # Make predictions using the testing set
+    # SOLUTION START
+    predictions = model.predict(X_test)
+    # SOLUTION END
 
+    # Fill in the blanks
+    # SOLUTION START
+    coefficients = model.coef_  # The coefficients i.e. the slope
+    intercept = model.intercept_  # The intercept
+    mse = mean_squared_error(y_test, predictions)  # Mean Squared Error
+    rmse = math.sqrt(mse)  # Root Mean Squared Error
+    r2score = r2_score(y_test, predictions)  # R-squared score
+    # SOLUTION END
 
-	#SOLUTION END
-
-	# Make predictions using the testing set
-	#SOLUTION START(~ 1 line of code)
-
-	#SOLUTION END
-
-	#fill in the blanks, how to get the value of coefficients, intercept, mse, rmse, r2score
-	#SOLUTION START
-	#The coefficients i.e. the slope
-	coefficients = #YOUR ANSWER
-	intercept = #YOUR ANSWER
-	mse = #YOUR ANSWER
-	rmse = #YOUR ANSWER
-	r2score = #YOUR ANSWER
-	#SOLUTION END
-
-
-	return (coefficients, intercept, mse, rmse, r2score)
+    return (coefficients, intercept, mse, rmse, r2score)
