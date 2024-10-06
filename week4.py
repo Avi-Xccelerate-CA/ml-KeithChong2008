@@ -31,7 +31,7 @@ def load():
 	load the dataset
 	return df
 	'''
-	df = pd.read_csv('https://www.kaggle.com/datasets/quantbruce/real-estate-price-prediction/download')
+	df = pd.read_csv('data/realestate.csv')
 	#SOLUTION START( ~ 1 line of code)
 	
 
@@ -67,7 +67,6 @@ def getInfo():
 	including the index dtype and columns, non-null values and memory usage.
 	'''
 	#SOLUTION START( ~ 1 line of code)
-	
 	return df.info()
 	#SOLUTION END
 
@@ -127,10 +126,22 @@ def split():
     '''
     IMPORTANT: this function will return four values X_train, X_test, y_train, y_test
     '''
-    # SOLUTION START
-    X = df.drop(columns=['Y house price of unit area'])  # Features
-    y = df['Y house price of unit area']  # Target variable
-    return train_test_split(X, y, test_size=0.2, random_state=42)
+    global df_X, df_y
+    
+    # Prepare features and target variable
+    X = df_X
+    y = df_y.values.ravel()  # Flatten to 1D array
+    
+    # Split the data into 80% training and 20% testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Reset indices of the resulting DataFrames
+    X_train = X_train.reset_index(drop=True)
+    X_test = X_test.reset_index(drop=True)
+    y_train = pd.DataFrame(y_train, columns=['Y house price of unit area']).reset_index(drop=True)  # Convert to DataFrame
+    y_test = pd.DataFrame(y_test, columns=['Y house price of unit area']).reset_index(drop=True)    # Convert to DataFrame
+    
+    return X_train, X_test, y_train, y_test
     # SOLUTION END
 
 X_train, X_test, y_train, y_test = split()
@@ -141,29 +152,14 @@ def makeModel():
     This function will create a linear regression object, train the model using the training sets,
     make predictions using the testing set, and return coefficients, intercept, mse, rmse, r2score.
     '''
-
-    # Create linear regression object
-    # SOLUTION START
     model = LinearRegression()
-    # SOLUTION END
-
-    # Train the model using the training sets
-    # SOLUTION START
     model.fit(X_train, y_train)
-    # SOLUTION END
-
-    # Make predictions using the testing set
-    # SOLUTION START
-    predictions = model.predict(X_test)
-    # SOLUTION END
-
-    # Fill in the blanks
-    # SOLUTION START
-    coefficients = model.coef_  # The coefficients i.e. the slope
-    intercept = model.intercept_  # The intercept
-    mse = mean_squared_error(y_test, predictions)  # Mean Squared Error
-    rmse = math.sqrt(mse)  # Root Mean Squared Error
-    r2score = r2_score(y_test, predictions)  # R-squared score
-    # SOLUTION END
-
-    return (coefficients, intercept, mse, rmse, r2score)
+    y_pred = model.predict(X_test)
+    coefficients = model.coef_
+    intercept = model.intercept_
+    mse = mean_squared_error(y_test, y_pred)
+    rmse = math.sqrt(mse)
+    r2 = r2_score(y_test, y_pred)
+    return coefficients, intercept, mse, rmse, r2
+  
+coefficients1, intercept1, mse1, rmse1, r2_score1 = makeModel()

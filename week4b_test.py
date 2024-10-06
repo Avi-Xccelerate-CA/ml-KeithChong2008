@@ -20,7 +20,7 @@ def test6():
 	df_y_train = pd.read_csv("testcase/ytrain.csv", index_col=0)
 	df_y_test = pd.read_csv("testcase/ytest.csv", index_col=0)
 
-	# assert(all(df_X_train == X_train1))
+	assert(all(df_X_train == X_train1))
 	assert(all(df_X_test == X_test1))
 	assert(all(df_y_train == y_train1))
 	assert(all(df_y_test == y_test1))
