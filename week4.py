@@ -126,21 +126,7 @@ def split():
     '''
     IMPORTANT: this function will return four values X_train, X_test, y_train, y_test
     '''
-    global df_X, df_y
-    
-    # Prepare features and target variable
-    X = df_X
-    y = df_y.values.ravel()  # Flatten to 1D array
-    
-    # Split the data into 80% training and 20% testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Reset indices of the resulting DataFrames
-    X_train = X_train.reset_index(drop=True)
-    X_test = X_test.reset_index(drop=True)
-    y_train = pd.DataFrame(y_train, columns=['Y house price of unit area']).reset_index(drop=True)  # Convert to DataFrame
-    y_test = pd.DataFrame(y_test, columns=['Y house price of unit area']).reset_index(drop=True)    # Convert to DataFrame
-    
+    X_train, X_test, y_train, y_test = train_test_split(df_X, df_y, test_size=0.2, random_state=42)
     return X_train, X_test, y_train, y_test
     # SOLUTION END
 
